@@ -1,4 +1,4 @@
-package liubomyr.stepanenko.kozyrnyituzapp.page
+package liubomyr.stepanenko.kozyrnyituzapp.screens.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import liubomyr.stepanenko.kozyrnyituzapp.model.Barbershop
 import liubomyr.stepanenko.kozyrnyituzapp.service.BarbershopService
+import liubomyr.stepanenko.kozyrnyituzapp.utils.Constants
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -24,7 +25,7 @@ class HomeViewModel : ViewModel() {
             override fun intercept(chain: Interceptor.Chain): Response {
                 val originalRequest = chain.request()
                 val newRequest = originalRequest.newBuilder()
-                    .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkB0dXouY29tIiwiaWF0IjoxNzA5NjgyMTUxLCJleHAiOjE3MDk2ODU3NTF9.NQ_Ve_GYJP8itFcr_Ylr6R_7Qhy7RV-fTZp5JYftX8A")
+                    .header("Authorization", "Bearer ${Constants.API_TOKEN}")
                     .build()
                 return chain.proceed(newRequest)
             }
@@ -33,7 +34,7 @@ class HomeViewModel : ViewModel() {
 
     private val barbershopService: BarbershopService by lazy {
         Retrofit.Builder()
-            .baseUrl("https://11f1-89-70-36-197.ngrok-free.app/")
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
