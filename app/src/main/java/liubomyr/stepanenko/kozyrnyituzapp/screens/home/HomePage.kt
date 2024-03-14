@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -34,7 +35,9 @@ internal fun HomePage(navController: NavController) {
 private fun BarbershopListScreen(homeViewModel: HomeViewModel = viewModel(), navController: NavController) {
     val barbershops = homeViewModel.barbershops.observeAsState(initial = emptyList())
 
-    Column {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp)
+    ) {
         Text(
             text = "Our Barbershops",
             style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),

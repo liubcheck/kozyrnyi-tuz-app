@@ -1,6 +1,7 @@
 package liubomyr.stepanenko.kozyrnyituzapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -28,6 +29,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,8 +39,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import liubomyr.stepanenko.kozyrnyituzapp.model.NavigationItem
+import liubomyr.stepanenko.kozyrnyituzapp.screens.auth.AuthPage
 import liubomyr.stepanenko.kozyrnyituzapp.screens.barbers.BarbersListPage
 import liubomyr.stepanenko.kozyrnyituzapp.screens.cart.ShoppingCartPage
 import liubomyr.stepanenko.kozyrnyituzapp.screens.home.BarbershopDetailPage
@@ -55,14 +59,24 @@ class MainActivity : ComponentActivity() {
         setContent {
             KozyrnyiTuzAppTheme {
                 val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+
                 Scaffold(
-                    bottomBar = { BottomNavigationBar(navController) }
+                    bottomBar = {
+                        val route = navBackStackEntry?.destination?.route ?: return@Scaffold
+                        Log.i("MainActivity", "bottomBar $route")
+
+                        if (route != "auth") {
+                            BottomNavigationBar(navController)
+                        }
+                    }
                 ) { paddingValues ->
                     NavHost(
                         navController = navController,
-                        startDestination = "home",
+                        startDestination = "auth",
                         modifier = Modifier.padding(paddingValues)
                     ) {
+                        composable("auth") { AuthPage(navController) }
                         composable("home") { HomePage(navController) }
                         composable("barbershopDetail/{barbershopId}") { backStackEntry ->
                             BarbershopDetailPage(

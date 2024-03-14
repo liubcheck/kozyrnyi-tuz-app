@@ -12,8 +12,8 @@ import com.google.gson.JsonSerializer
 import kotlinx.coroutines.launch
 import liubomyr.stepanenko.kozyrnyituzapp.model.Visit
 import liubomyr.stepanenko.kozyrnyituzapp.service.VisitService
+import liubomyr.stepanenko.kozyrnyituzapp.utils.AuthInterceptor
 import liubomyr.stepanenko.kozyrnyituzapp.utils.Constants
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -34,7 +34,7 @@ class ConfirmedVisitsViewModel : ViewModel() {
 
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
+            .addInterceptor(AuthInterceptor())
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .build()
     }
@@ -58,14 +58,6 @@ class ConfirmedVisitsViewModel : ViewModel() {
 
     private val localDateTimeSerializer = JsonSerializer<LocalDateTime> { src, _, _ ->
         JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-    }
-
-    private val authInterceptor = Interceptor { chain ->
-        val originalRequest = chain.request()
-        val newRequest = originalRequest.newBuilder()
-            .header("Authorization", "Bearer ${Constants.API_TOKEN}")
-            .build()
-        chain.proceed(newRequest)
     }
 
     init {
