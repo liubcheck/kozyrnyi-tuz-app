@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -47,12 +49,15 @@ import liubomyr.stepanenko.kozyrnyituzapp.screens.barbers.BarbersListPage
 import liubomyr.stepanenko.kozyrnyituzapp.screens.cart.ShoppingCartPage
 import liubomyr.stepanenko.kozyrnyituzapp.screens.home.BarbershopDetailPage
 import liubomyr.stepanenko.kozyrnyituzapp.screens.home.HomePage
+import liubomyr.stepanenko.kozyrnyituzapp.screens.profile.ProfilePage
 import liubomyr.stepanenko.kozyrnyituzapp.screens.search.SearchPage
 import liubomyr.stepanenko.kozyrnyituzapp.screens.timeslot.TimeslotSelectionPage
 import liubomyr.stepanenko.kozyrnyituzapp.screens.visit.VisitsPage
 import liubomyr.stepanenko.kozyrnyituzapp.ui.theme.KozyrnyiTuzAppTheme
 
 class MainActivity : ComponentActivity() {
+    private val bottomBarsScreen = listOf("home", "search", "visits", "cart", "profile")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -64,17 +69,20 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     bottomBar = {
                         val route = navBackStackEntry?.destination?.route ?: return@Scaffold
-                        Log.i("MainActivity", "bottomBar $route")
-
-                        if (route != "auth") {
+                        if (bottomBarsScreen.contains(route)) {
                             BottomNavigationBar(navController)
                         }
-                    }
+                    },
+                    modifier = Modifier.fillMaxSize()
                 ) { paddingValues ->
                     NavHost(
                         navController = navController,
                         startDestination = "auth",
-                        modifier = Modifier.padding(paddingValues)
+                        modifier = Modifier.padding(paddingValues),
+                        enterTransition = { EnterTransition.None },
+                        exitTransition = { ExitTransition.None },
+                        popEnterTransition = { EnterTransition.None },
+                        popExitTransition = { ExitTransition.None },
                     ) {
                         composable("auth") { AuthPage(navController) }
                         composable("home") { HomePage(navController) }
@@ -114,7 +122,7 @@ class MainActivity : ComponentActivity() {
 private fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         NavigationItem("Home", Icons.Filled.Home),
-        NavigationItem("Search", Icons.Filled.Search),
+        // NavigationItem("Search", Icons.Filled.Search),
         NavigationItem("Visits", Icons.Filled.List),
         NavigationItem("Cart", Icons.Filled.ShoppingCart),
         NavigationItem("Profile", Icons.Filled.Person)
@@ -136,63 +144,3 @@ private fun BottomNavigationBar(navController: NavController) {
     }
 }
 
-
-@Composable
-fun ProfilePage(onExitClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Профіль",
-            style = MaterialTheme.typography.headlineMedium
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Image(
-                painterResource(id = R.drawable.profile),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(CircleShape)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Юрій", style = MaterialTheme.typography.titleLarge)
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Profile options list
-        ProfileOption("Мої бронювання")
-        ProfileOption("Мої промокоди")
-        ProfileOption("Вихід") {
-            onExitClick()
-        }
-    }
-}
-
-@Composable
-fun ProfileOption(title: String, onClick: () -> Unit = {}) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            imageVector = Icons.Default.ArrowForward,
-            contentDescription = "Go to $title",
-            modifier = Modifier.size(24.dp)
-        )
-    }
-}

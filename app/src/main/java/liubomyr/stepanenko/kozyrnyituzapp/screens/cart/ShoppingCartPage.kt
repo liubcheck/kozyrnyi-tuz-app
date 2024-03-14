@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -30,6 +26,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import liubomyr.stepanenko.kozyrnyituzapp.model.AddVisitRequest
 import liubomyr.stepanenko.kozyrnyituzapp.model.VisitInfo
+import liubomyr.stepanenko.kozyrnyituzapp.ui.core.HeaderScreen
+import liubomyr.stepanenko.kozyrnyituzapp.ui.core.Item
+import liubomyr.stepanenko.kozyrnyituzapp.ui.core.OurLazyColumn
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -40,11 +39,8 @@ internal fun ShoppingCartPage(visitsViewModel: VisitsViewModel = viewModel()) {
 
     val savedVisits = remember(refreshVisits) { mutableStateOf(getSavedVisits(context)) }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Your Selected Visits",
-            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold))
-        Spacer(modifier = Modifier.height(45.dp))
-        LazyColumn {
+    HeaderScreen(text = "Your Selected Visits") {
+        OurLazyColumn {
             items(savedVisits.value) { visit ->
                 VisitRow(visit, visitsViewModel, context) {
                     refreshVisits = !refreshVisits
@@ -55,34 +51,43 @@ internal fun ShoppingCartPage(visitsViewModel: VisitsViewModel = viewModel()) {
 }
 
 @Composable
-private fun VisitRow(visitInfo: VisitInfo, visitsViewModel: VisitsViewModel,
-                     context: Context, onVisitConfirmed: () -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth().padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text("Barber ID: ${visitInfo.barberId}")
-            Text("Time: ${visitInfo.datetime}")
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-        Button(onClick = {
-            val addVisitRequest = AddVisitRequest(
-                barberId = visitInfo.barberId,
-                userId = 2L, // Static user ID for demonstration
-                datetime = parseStringToLocalDateTime(visitInfo.datetime),
-                durationMin = 30
-            )
-            // Updated to include onSuccess and onError lambdas
-            visitsViewModel.confirmVisit(addVisitRequest, context, onSuccess = {
-                // onSuccess lambda
-                removeVisitFromSharedPreferences(context, visitInfo)
-                onVisitConfirmed() // This will trigger UI refresh
-                Toast.makeText(context, "Visit confirmed successfully", Toast.LENGTH_SHORT).show()
-            }, onError = { errorMessage ->
-                // onError lambda
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            })
-        }) {
-            Text("Confirm Visit")
+private fun VisitRow(
+    visitInfo: VisitInfo,
+    visitsViewModel: VisitsViewModel,
+    context: Context,
+    onVisitConfirmed: () -> Unit
+) {
+    Item {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Barber ID: ${visitInfo.barberId}")
+                Text("Time: ${visitInfo.datetime}")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = {
+                val addVisitRequest = AddVisitRequest(
+                    barberId = visitInfo.barberId,
+                    userId = 2L, // Static user ID for demonstration
+                    datetime = parseStringToLocalDateTime(visitInfo.datetime),
+                    durationMin = 30
+                )
+                // Updated to include onSuccess and onError lambdas
+                visitsViewModel.confirmVisit(addVisitRequest, context, onSuccess = {
+                    // onSuccess lambda
+                    removeVisitFromSharedPreferences(context, visitInfo)
+                    onVisitConfirmed() // This will trigger UI refresh
+                    Toast.makeText(context, "Visit confirmed successfully", Toast.LENGTH_SHORT)
+                        .show()
+                }, onError = { errorMessage ->
+                    // onError lambda
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                })
+            }) {
+                Text("Confirm Visit")
+            }
         }
     }
 }

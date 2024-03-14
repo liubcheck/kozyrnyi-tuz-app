@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,6 +29,8 @@ import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import liubomyr.stepanenko.kozyrnyituzapp.model.VisitInfo
 import liubomyr.stepanenko.kozyrnyituzapp.screens.cart.getSavedVisits
+import liubomyr.stepanenko.kozyrnyituzapp.ui.core.HeaderScreen
+import liubomyr.stepanenko.kozyrnyituzapp.ui.core.Item
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.format.DateTimeFormatter
@@ -41,29 +45,29 @@ fun TimeslotSelectionPage(barberId: Long, navController: NavController) {
         initialTimeslot.plusMinutes(30L * index)
     }
 
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            "Select a Timeslot for Barber $barberId",
-            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(45.dp))
-
-        if (showConfirmation) {
-            ShowTemporaryMessage(message = "Visit added to cart") {
-                navController.navigate("cart")
-            }
-        } else {
-            timeslots.forEach { timeslot ->
-                TimeslotOption(timeslot, barberId, context) {
-                    showConfirmation = true
+    HeaderScreen(text = "Timeslot for Barber $barberId") {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (showConfirmation) {
+                Item {
+                    ShowTemporaryMessage(message = "Visit added to cart") {
+                        navController.navigate("cart")
+                    }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+            } else {
+                LazyColumn(
+                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)
+                ) {
+                   items(timeslots) { timeslot ->
+                       TimeslotOption(timeslot, barberId, context) {
+                           showConfirmation = true
+                       }
+                   }
+                }
             }
         }
     }

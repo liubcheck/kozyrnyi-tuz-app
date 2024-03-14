@@ -20,7 +20,7 @@ class AuthInterceptor: Interceptor {
 
         val processed = chain.proceed(newRequest)
 
-        if (processed.code == 403) {
+        if (processed.code == 401) {
             val email = SharedPreferencesManager.getString("email", "")
             val password = SharedPreferencesManager.getString("password", "")
 
@@ -31,6 +31,8 @@ class AuthInterceptor: Interceptor {
                 val newAuthRequest = originalRequest.newBuilder()
                     .header("Authorization", "Bearer $newToken")
                     .build()
+
+                processed.close()
                 chain.proceed(newAuthRequest)
             } else {
                 throw Exception("Failed to refresh token")

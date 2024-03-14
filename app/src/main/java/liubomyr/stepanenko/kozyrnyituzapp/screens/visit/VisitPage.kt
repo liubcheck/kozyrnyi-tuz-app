@@ -15,6 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import liubomyr.stepanenko.kozyrnyituzapp.model.Visit
+import liubomyr.stepanenko.kozyrnyituzapp.ui.core.HeaderScreen
+import liubomyr.stepanenko.kozyrnyituzapp.ui.core.Item
+import liubomyr.stepanenko.kozyrnyituzapp.ui.core.OurLazyColumn
 
 @Composable
 internal fun VisitsPage(confirmedVisitsViewModel: ConfirmedVisitsViewModel = viewModel()) {
@@ -24,34 +27,45 @@ internal fun VisitsPage(confirmedVisitsViewModel: ConfirmedVisitsViewModel = vie
 @Composable
 private fun VisitsListScreen(confirmedVisitsViewModel: ConfirmedVisitsViewModel = viewModel()) {
     val confirmedVisits = confirmedVisitsViewModel.confirmedVisits.observeAsState(initial = emptyList())
-    VisitsList(confirmedVisits = confirmedVisits.value)
+    HeaderScreen(text = "Visits") {
+        VisitsList(confirmedVisits = confirmedVisits.value)
+    }
 }
 
 @Composable
 private fun VisitsList(confirmedVisits: List<Visit>) {
-    LazyColumn {
+    OurLazyColumn {
         items(confirmedVisits) { confirmedVisit ->
             ConfirmedVisitRow(confirmedVisit = confirmedVisit)
         }
     }
 }
 
-
-
 @Composable
 private fun ConfirmedVisitRow(confirmedVisit: Visit) {
-    Row(verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center) {
-        Column() {
-            Text(modifier = Modifier.padding(start = 16.dp),
-                text = "${confirmedVisit.datetime}",
-                style = MaterialTheme.typography.titleLarge)
-            Text(modifier = Modifier.padding(start = 16.dp, bottom = 16.dp),
-                text = "Barber ID: ${confirmedVisit.barberId}", style = MaterialTheme.typography.bodyMedium)
-            Text(modifier = Modifier.padding(start = 16.dp, bottom = 16.dp),
-                text = "User ID: ${confirmedVisit.userId}", style = MaterialTheme.typography.bodyMedium)
-            Text(modifier = Modifier.padding(start = 16.dp, bottom = 16.dp),
-                text = "Time: ${confirmedVisit.durationMin} m", style = MaterialTheme.typography.bodyMedium)
+    Item {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Column {
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = "Visit ID: ${confirmedVisit.id} User ID: ${confirmedVisit.userId} Barber ID: ${confirmedVisit.barberId}",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = "Date: ${confirmedVisit.getFormattedDateTime()}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = "Duration: ${confirmedVisit.durationMin} min",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
     }
 }
