@@ -31,6 +31,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +57,8 @@ import liubomyr.stepanenko.kozyrnyituzapp.screens.timeslot.TimeslotSelectionPage
 import liubomyr.stepanenko.kozyrnyituzapp.screens.visit.VisitsPage
 import liubomyr.stepanenko.kozyrnyituzapp.ui.theme.KozyrnyiTuzAppTheme
 
+val localNavController = compositionLocalOf<NavController> { error("") }
+
 class MainActivity : ComponentActivity() {
     private val bottomBarsScreen = listOf("home", "search", "visits", "cart", "profile")
 
@@ -66,50 +70,54 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-                Scaffold(
-                    bottomBar = {
-                        val route = navBackStackEntry?.destination?.route ?: return@Scaffold
-                        if (bottomBarsScreen.contains(route)) {
-                            BottomNavigationBar(navController)
-                        }
-                    },
-                    modifier = Modifier.fillMaxSize()
-                ) { paddingValues ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = "auth",
-                        modifier = Modifier.padding(paddingValues),
-                        enterTransition = { EnterTransition.None },
-                        exitTransition = { ExitTransition.None },
-                        popEnterTransition = { EnterTransition.None },
-                        popExitTransition = { ExitTransition.None },
-                    ) {
-                        composable("auth") { AuthPage(navController) }
-                        composable("home") { HomePage(navController) }
-                        composable("barbershopDetail/{barbershopId}") { backStackEntry ->
-                            BarbershopDetailPage(
-                                barbershopId = backStackEntry.arguments?.getString("barbershopId")
-                                ?: "",
-                                navController = navController,
-                                homeViewModel = viewModel()
-                            )
-                        }
-                        composable("barberList") {
-                            BarbersListPage(barbersViewModel = viewModel(), navController)
-                        }
-                        composable("timeslotSelection/{barberId}") { backStackEntry ->
-                            TimeslotSelectionPage(
-                                barberId = backStackEntry.arguments?.getString("barberId")?.toLongOrNull() ?: return@composable,
-                                navController = navController
-                            )
-                        }
-                        composable("search") { SearchPage() }
-                        composable("visits") {
-                            VisitsPage(confirmedVisitsViewModel = viewModel())
-                        }
-                        composable("cart") { ShoppingCartPage(visitsViewModel = viewModel()) }
-                        composable("profile") {
-                            ProfilePage(onExitClick = { this@MainActivity.finish() })
+                CompositionLocalProvider(
+                    localNavController provides navController
+                ) {
+                    Scaffold(
+                        bottomBar = {
+                            val route = navBackStackEntry?.destination?.route ?: return@Scaffold
+                            if (bottomBarsScreen.contains(route)) {
+                                BottomNavigationBar(navController)
+                            }
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    ) { paddingValues ->
+                        NavHost(
+                            navController = navController,
+                            startDestination = "auth",
+                            modifier = Modifier.padding(paddingValues),
+                            enterTransition = { EnterTransition.None },
+                            exitTransition = { ExitTransition.None },
+                            popEnterTransition = { EnterTransition.None },
+                            popExitTransition = { ExitTransition.None },
+                        ) {
+                            composable("auth") { AuthPage(navController) }
+                            composable("home") { HomePage(navController) }
+                            composable("barbershopDetail/{barbershopId}") { backStackEntry ->
+                                BarbershopDetailPage(
+                                    barbershopId = backStackEntry.arguments?.getString("barbershopId")
+                                    ?: "",
+                                    navController = navController,
+                                    homeViewModel = viewModel()
+                                )
+                            }
+                            composable("barberList") {
+                                BarbersListPage(barbersViewModel = viewModel(), navController)
+                            }
+                            composable("timeslotSelection/{barberId}") { backStackEntry ->
+                                TimeslotSelectionPage(
+                                    barberId = backStackEntry.arguments?.getString("barberId")?.toLongOrNull() ?: return@composable,
+                                    navController = navController
+                                )
+                            }
+                            composable("search") { SearchPage() }
+                            composable("visits") {
+                                VisitsPage(confirmedVisitsViewModel = viewModel())
+                            }
+                            composable("cart") { ShoppingCartPage(visitsViewModel = viewModel()) }
+                            composable("profile") {
+                                ProfilePage(onExitClick = { this@MainActivity.finish() })
+                            }
                         }
                     }
                 }

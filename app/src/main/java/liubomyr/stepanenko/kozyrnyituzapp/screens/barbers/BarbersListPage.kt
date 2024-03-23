@@ -29,7 +29,7 @@ import liubomyr.stepanenko.kozyrnyituzapp.ui.core.OurLazyColumn
 fun BarbersListPage(barbersViewModel: BarbersViewModel = viewModel(), navController: NavController) {
     val barbers = barbersViewModel.barbers.observeAsState(initial = emptyList())
 
-    HeaderScreen(text = "Select Your Barber") {
+    HeaderScreen(text = "Select Your Barber", canBack = true) {
         BarbersList(barbers = barbers.value, navController = navController)
 
     }

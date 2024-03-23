@@ -45,7 +45,7 @@ fun TimeslotSelectionPage(barberId: Long, navController: NavController) {
         initialTimeslot.plusMinutes(30L * index)
     }
 
-    HeaderScreen(text = "Timeslot for Barber $barberId") {
+    HeaderScreen(text = "Timeslot for Barber $barberId", canBack = true) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
