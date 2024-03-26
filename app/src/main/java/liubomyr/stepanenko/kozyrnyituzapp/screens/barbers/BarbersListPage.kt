@@ -4,10 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,10 +17,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.SubcomposeAsyncImage
 import liubomyr.stepanenko.kozyrnyituzapp.R
 import liubomyr.stepanenko.kozyrnyituzapp.model.Barber
 import liubomyr.stepanenko.kozyrnyituzapp.ui.core.HeaderScreen
@@ -57,11 +61,13 @@ fun BarberRow(barber: Barber, navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.weight(1f)
             ) {
-                Image(
-                    painterResource(id = R.drawable.barber),
+                SubcomposeAsyncImage(
+                    // model = "https://fastly.picsum.photos/id/1014/200/300.jpg?hmac=nxBnyyuXuAKEA6yVxBtNN4YjpjaciQXA3KwTRICTlWU",
+                    model = barber.imageUrl,
+                    modifier = Modifier.heightIn(200.dp),
+                    contentScale = ContentScale.FillHeight,
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(200.dp)
+                    loading = { CircularProgressIndicator() },
                 )
                 Text(
                     text = "${barber.firstName} ${barber.lastName}",
@@ -76,7 +82,7 @@ fun BarberRow(barber: Barber, navController: NavController) {
             ) {
                 Text(
                     text = "An awesome barber",
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyLarge,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
                 Button(

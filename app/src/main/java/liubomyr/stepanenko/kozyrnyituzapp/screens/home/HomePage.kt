@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,11 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import liubomyr.stepanenko.kozyrnyituzapp.R
 import liubomyr.stepanenko.kozyrnyituzapp.model.Barbershop
 import liubomyr.stepanenko.kozyrnyituzapp.ui.core.HeaderScreen
@@ -93,9 +98,13 @@ internal fun BarbershopDetailPage(barbershopId: String, navController: NavContro
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
                 ) {
-                    Image(
-                        painterResource(id = R.drawable.barbershop),
+                    SubcomposeAsyncImage(
+                        // model = "https://fastly.picsum.photos/id/1014/200/300.jpg?hmac=nxBnyyuXuAKEA6yVxBtNN4YjpjaciQXA3KwTRICTlWU",
+                        model = barbershop.imageUrl,
+                        modifier = Modifier.heightIn(300.dp),
+                        contentScale = ContentScale.FillHeight,
                         contentDescription = null,
+                        loading = { CircularProgressIndicator() },
                     )
                     Text(text = barbershop.address)
 
