@@ -3,13 +3,11 @@ package liubomyr.stepanenko.kozyrnyituzapp.model
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-
-
-
 data class Visit(
     val id: Long,
-    val barberId: Long,
-    val userId: Long,
+    val barber: Barber,
+    val user: User,
+    val barbershop: Barbershop,
     val datetime: LocalDateTime,
     val durationMin: Int,
 ) {

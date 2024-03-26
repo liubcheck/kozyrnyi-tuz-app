@@ -51,17 +51,18 @@ private fun ConfirmedVisitRow(confirmedVisit: Visit) {
         ) {
             Column {
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
-                    text = "Visit ID: ${confirmedVisit.id} User ID: ${confirmedVisit.userId} Barber ID: ${confirmedVisit.barberId}",
+                    text = "Visit to ${confirmedVisit.barbershop.name}",
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
-                    text = "Date: ${confirmedVisit.getFormattedDateTime()}",
+                    text = "Barber: ${confirmedVisit.barber.firstName} ${confirmedVisit.barber.lastName}",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    modifier = Modifier.padding(start = 16.dp),
+                    text = "User: ${confirmedVisit.user.name}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
                     text = "Duration: ${confirmedVisit.durationMin} min",
                     style = MaterialTheme.typography.bodyMedium
                 )
