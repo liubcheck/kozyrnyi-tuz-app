@@ -1,4 +1,4 @@
-package liubomyr.stepanenko.kozyrnyituzapp.page
+package liubomyr.stepanenko.kozyrnyituzapp.screens.cart
 
 import android.content.Context
 import android.widget.Toast
@@ -17,9 +17,11 @@ import kotlinx.coroutines.withContext
 import liubomyr.stepanenko.kozyrnyituzapp.model.AddVisitRequest
 import liubomyr.stepanenko.kozyrnyituzapp.model.Visit
 import liubomyr.stepanenko.kozyrnyituzapp.service.VisitService
+import liubomyr.stepanenko.kozyrnyituzapp.utils.AuthInterceptor
+import liubomyr.stepanenko.kozyrnyituzapp.utils.Constants
+import liubomyr.stepanenko.kozyrnyituzapp.utils.SharedPreferencesManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -42,14 +44,14 @@ class VisitsViewModel : ViewModel() {
 
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
+            .addInterceptor(AuthInterceptor())
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .build()
     }
 
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://11f1-89-70-36-197.ngrok-free.app/")
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .build()
@@ -66,14 +68,6 @@ class VisitsViewModel : ViewModel() {
 
     private val localDateTimeSerializer = JsonSerializer<LocalDateTime> { src, _, _ ->
         JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-    }
-
-    private val authInterceptor = Interceptor { chain ->
-        val originalRequest = chain.request()
-        val newRequest = originalRequest.newBuilder()
-            .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkB0dXouY29tIiwiaWF0IjoxNzA5NjgyMTUxLCJleHAiOjE3MDk2ODU3NTF9.NQ_Ve_GYJP8itFcr_Ylr6R_7Qhy7RV-fTZp5JYftX8A")
-            .build()
-        chain.proceed(newRequest)
     }
 
     fun confirmVisit(addVisitRequest: AddVisitRequest, context: Context,

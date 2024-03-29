@@ -7,5 +7,6 @@ data class Barbershop (
     val name: String,
     val address: String,
     @SerializedName("lat") val latitude: Double,
-    @SerializedName("lng") val longitude: Double
+    @SerializedName("lng") val longitude: Double,
+    val imageUrl: String,
 )
