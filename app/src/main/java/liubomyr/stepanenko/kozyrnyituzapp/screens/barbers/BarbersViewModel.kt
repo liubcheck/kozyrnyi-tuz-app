@@ -33,13 +33,11 @@ class BarbersViewModel : ViewModel() {
             .create(BarberService::class.java)
     }
 
-    init {
-        loadBarbers()
-    }
-
-    fun loadBarbers() {
+    fun loadBarberById(id: String) {
+        println("loadBarberById $id")
         viewModelScope.launch {
-            val response = barberService.getAllBarbers()
+            val response = barberService.getBarberByShopId(id)
+            println("loadBarberById response $response")
             if (response.isSuccessful) {
                 _barbers.postValue(response.body())
             }

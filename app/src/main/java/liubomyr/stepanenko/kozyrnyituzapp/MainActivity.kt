@@ -101,8 +101,12 @@ class MainActivity : ComponentActivity() {
                                     homeViewModel = viewModel()
                                 )
                             }
-                            composable("barberList") {
-                                BarbersListPage(barbersViewModel = viewModel(), navController)
+                            composable("barberList/{barbershopId}") { backStackEntry ->
+                                BarbersListPage(
+                                    barbershopId = backStackEntry.arguments?.getString("barbershopId") ?: "",
+                                    barbersViewModel = viewModel(),
+                                    navController
+                                )
                             }
                             composable("timeslotSelection/{barberId}") { backStackEntry ->
                                 TimeslotSelectionPage(

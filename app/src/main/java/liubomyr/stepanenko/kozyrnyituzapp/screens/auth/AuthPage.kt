@@ -81,7 +81,12 @@ private fun AuthScreen(
             }
 
             null -> {
-                CircularProgressIndicator()
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = androidx.compose.ui.Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
         }
     }

@@ -2,7 +2,6 @@ package liubomyr.stepanenko.kozyrnyituzapp.screens.home
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,9 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -22,16 +19,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import coil.compose.SubcomposeAsyncImage
-import liubomyr.stepanenko.kozyrnyituzapp.R
 import liubomyr.stepanenko.kozyrnyituzapp.model.Barbershop
+import liubomyr.stepanenko.kozyrnyituzapp.ui.core.AsyncImage
 import liubomyr.stepanenko.kozyrnyituzapp.ui.core.HeaderScreen
 import liubomyr.stepanenko.kozyrnyituzapp.ui.core.Item
 import liubomyr.stepanenko.kozyrnyituzapp.ui.core.OurLazyColumn
@@ -61,7 +54,6 @@ private fun BarbershopList(barbershops: List<Barbershop>, navController: NavCont
 
 @Composable
 private fun BarbershopRow(barbershop: Barbershop, navController: NavController) {
-    val content = LocalContext.current
     Item {
         Column(
             modifier = Modifier
@@ -98,13 +90,9 @@ internal fun BarbershopDetailPage(barbershopId: String, navController: NavContro
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
                 ) {
-                    SubcomposeAsyncImage(
-                        // model = "https://fastly.picsum.photos/id/1014/200/300.jpg?hmac=nxBnyyuXuAKEA6yVxBtNN4YjpjaciQXA3KwTRICTlWU",
-                        model = barbershop.imageUrl,
-                        modifier = Modifier.heightIn(300.dp),
-                        contentScale = ContentScale.FillHeight,
-                        contentDescription = null,
-                        loading = { CircularProgressIndicator() },
+                    AsyncImage(
+                        url = barbershop.imageUrl,
+                        height = 300
                     )
                     Text(text = barbershop.address)
 
@@ -113,7 +101,7 @@ internal fun BarbershopDetailPage(barbershopId: String, navController: NavContro
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
                     ) {
-                        Button(onClick = { navController.navigate("barberList") }) {
+                        Button(onClick = { navController.navigate("barberList/$barbershopId") }) {
                             Text("Select Barber", style = MaterialTheme.typography.bodyLarge)
                         }
                         Button(onClick = {
@@ -128,7 +116,10 @@ internal fun BarbershopDetailPage(barbershopId: String, navController: NavContro
             }
         }
     } else {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = androidx.compose.ui.Alignment.Center
+        ) {
             CircularProgressIndicator()
         }
     }
